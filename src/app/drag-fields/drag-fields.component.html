@@ -1,0 +1,131 @@
+<div class="row">
+
+    <div class="col-md-10">
+      <mat-card> <div class="example-container2">
+        <h2>Selected Fields</h2>
+      
+        <div 
+          cdkDropList
+          #doneList="cdkDropList"
+          [cdkDropListData]="SelectedFields"
+          [cdkDropListConnectedTo]="[todoList]"
+          cdkDropListOrientation="horizontal"
+          class="example-list2"
+          (cdkDropListDropped)="drop($event)">
+          <div class="example-box2"  style="text-transform: capitalize;" *ngFor="let item of SelectedFields" cdkDrag>{{item}}</div>
+        </div>
+      </div>
+    
+      <div class="d-flex justify-content-end py-3">
+        <button   mat-flat-button color="primary" (click)="GenerateReport()"> Generate Report</button>
+    </div>
+    </mat-card>
+       
+
+         
+
+           <!-- table area -->
+           <div *ngIf="isTableShow" class="mt-md-5">
+            
+            <mat-card>
+              <h2>Report Information</h2>
+              <div class="d-flex justify-content-between mt-md5">
+              <div > <div class="form-group mb-1" >
+                <input  type="text" [(ngModel)]="searchText" class="form-control" 
+                name="search" id="seacrch" placeholder="Global Search" autocomplete="off" >
+              </div>
+            </div>
+              <div >
+
+                
+                  <button mat-flat-button color="primary" (click)="exportexcel()">
+                  <mat-icon> cloud_download</mat-icon>
+                  </button>
+
+              </div>
+              
+            </div>
+
+            <table class="table table-bordered " id="reportTable">
+              <thead >
+                <tr  >
+                  <th  style="text-transform: capitalize;background-color: rgb(243, 242, 242);" *ngFor="let item of tableCols" scope="col">{{item}}</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr  *ngFor="let data of tableData | filter:searchText ">
+                   <td  *ngFor="let name of tableCols;" > 
+                      <div *ngIf="name==='employeName' ">
+                         {{data.employeName}}
+                      </div>
+                      <div *ngIf="name==='employeDescription' ">
+                        {{data.employeDescription}}
+                     </div>
+
+
+                     <div *ngIf="name==='cityName' ">
+                      {{data.cityName}}
+                   </div>
+
+                   <div *ngIf="name==='departmentName' ">
+                    {{data.departmentName}}
+                 </div>
+
+
+                 <div *ngIf="name==='countryName' ">
+                  {{data.countryName}}
+                 </div>
+
+                   <div *ngIf="name==='employeId' ">
+                  {{data.employeId}}
+                 </div>
+
+                 <div *ngIf="name==='countryId' ">
+                  {{data.countryId}}
+                 </div>
+
+                 <div *ngIf="name==='cityId' ">
+                  {{data.cityId}}
+                 </div>
+
+                 <div *ngIf="name==='departmentId' ">
+                  {{data.departmentId}}
+                 </div>
+
+                 <div *ngIf="name==='joinDate' ">
+                  {{data.joinDate }}
+                 </div>
+                    
+                  </td>
+                </tr>
+              
+
+              </tbody>
+            </table>
+          </mat-card>
+            
+           </div>
+         
+    </div>
+    <div class="col-md-2">
+    <mat-card>
+        <div class="example-container">
+            <h2> Fields </h2>
+          
+            <div
+              cdkDropList
+              #todoList="cdkDropList"
+              [cdkDropListData]="Fields"
+              [cdkDropListConnectedTo]="[doneList]"
+              class="example-list"
+              (cdkDropListDropped)="drop($event)">
+              <div class="example-box"  style="text-transform: capitalize;" *ngFor="let item of Fields" cdkDrag>{{item}}</div>
+            </div>
+          </div>
+          </mat-card>
+    </div>
+  </div>
+
+
+
