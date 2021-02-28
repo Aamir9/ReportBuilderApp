@@ -3,8 +3,10 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
 import { ReportBuilderService } from '../Services/report-builder.service';
 import { reportInfo } from 'src/app/interfaces/reportInfo';
 import * as XLSX from 'xlsx'; 
-import {FlatTreeControl} from '@angular/cdk/tree';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
+import { ToastrService } from 'ngx-toastr';
+import { asLiteral } from '@angular/compiler/src/render3/view/util';
+
+
 
 @Component({
   selector: 'app-drag-fields',
@@ -12,23 +14,22 @@ import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
   styleUrls: ['./drag-fields.component.css']
 })
 export class DragFieldsComponent implements OnInit {
-  Employee:  [
-    {name: 'Employe Name'},
-    {name: 'employe Description'},
-    {name: 'join Date'},
-  ]
+  employee:any = {
+  text:'Employee',
+  nodes: [ 'employeId', 'employeName', 'employeDescription',  'joinDate' ]
+  } 
 
-  Department :[
-    {name: 'Department Name'},
-  ]
+  department :any={
+    text:'Department',
+   nodes :['departmentId', 'departmentName' , ]}
 
-  City :[
-    {name: 'City Name'},
-  ]
+   city :any={
+    text:'City',
+   nodes :[ 'cityId','cityName' , ]}
 
-  Country :[
-    {name: 'Country Name'},
-  ]
+   Country :any={
+    text:'Department',
+   nodes :[ 'countryId','countryName' , ]}
 
   Fields: string[] = [
     'employeName',
@@ -44,6 +45,7 @@ export class DragFieldsComponent implements OnInit {
     
   ];
 
+ 
   tableData: any[] = [];
   reportResponse: reportInfo[] = [];
   SelectedFields: string[] = [];
@@ -52,10 +54,22 @@ export class DragFieldsComponent implements OnInit {
   searchText;
   obj: { [key: string]: string | number | any } = {};
   fileName= 'ExcelSheet.xlsx';
-  constructor(private _reportBuilderService: ReportBuilderService) { }
+  Fiedslist:any[]=[];
 
-  ngOnInit(): void {
+  constructor(private _reportBuilderService: ReportBuilderService, private toastr: ToastrService) { 
+
+     
   }
+ 
+  ngOnInit(): void {
+
+    this.Fiedslist.push(this.employee);
+    this.Fiedslist.push(this.department);
+    this.Fiedslist.push(this.city);
+    this.Fiedslist.push(this.Country);
+
+}
+  
 
   drop(event: CdkDragDrop<string[]>) {
     this.isTableShow = false;
@@ -171,4 +185,60 @@ export class DragFieldsComponent implements OnInit {
     }
 
 
+    DisplayTreeView(event){
+
+   if(event.target.classList.contains('fa-caret-down')){
+    event.target.classList.add('fa-caret-right');
+    event.target.classList.remove('fa-caret-down');
+    event.srcElement.nextElementSibling.classList.remove('Treeactive');
+   }else{
+
+    event.target.classList.add('fa-caret-down');
+    event.target.classList.remove('fa-caret-right');
+    event.srcElement.nextElementSibling.classList.add('Treeactive');
+   }
+   
+
+    }
+
+
+    dropItem(ev) {
+      this.isTableShow = false;
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      // ev.target.appendChild(document.getElementById(data));
+      // var element =  document.getElementById("draged");
+       let isVal= this.SelectedFields.find(o =>o === data);
+       if(isVal === undefined)
+          this.SelectedFields.push(data);
+       else
+         this.showInfo(isVal + ' ' +'aready exist');
+      // element.appendChild(document.getElementById(data));
+    }
+  
+    allowDrop(ev) {
+      ev.preventDefault();
+    }
+  
+    drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+
+    RemoveItemFromSectedList(item){
+      this.isTableShow = false;
+      const index = this.SelectedFields.indexOf(item);
+      if (index > -1) {
+        this.SelectedFields.splice(index, 1);
+        this.showSuccess('Removed ' +' ' + item );
+      }
+      
+    }
+    showInfo(message) {
+      this.toastr.info(message , 'Note !' );
+    }
+
+    showSuccess(message) {
+      this.toastr.success(message , 'Success !' );
+    }
 }

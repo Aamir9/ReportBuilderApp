@@ -3,8 +3,18 @@
     <div class="col-md-10">
       <mat-card> <div class="example-container2">
         <h2>Selected Fields</h2>
-      
-        <div 
+        <div id="draged" 
+        (drop)="dropItem($event)" 
+        (dragover)="allowDrop($event)">
+        <ul *ngFor="let item of SelectedFields">
+          <li class="d-flex "> 
+            <span class="pt-1 pb-1" style="text-transform: capitalize;"> {{item}} </span>
+               <mat-icon style="margin-left: 1rem;cursor: pointer;" (click)="RemoveItemFromSectedList(item)"> cancel</mat-icon> 
+                 </li>
+        </ul>
+       </div>
+
+        <div  style="display: none;"
           cdkDropList
           #doneList="cdkDropList"
           [cdkDropListData]="SelectedFields"
@@ -15,6 +25,8 @@
           <div class="example-box2"  style="text-transform: capitalize;" *ngFor="let item of SelectedFields" cdkDrag>{{item}}</div>
         </div>
       </div>
+
+      
     
       <div class="d-flex justify-content-end py-3">
         <button   mat-flat-button color="primary" (click)="GenerateReport()"> Generate Report</button>
@@ -30,7 +42,7 @@
             <mat-card>
               <h2>Report Information</h2>
               <div class="d-flex justify-content-between mt-md5">
-              <div > <div class="form-group mb-1" >
+              <div > <div class="form-group mb-3" >
                 <input  type="text" [(ngModel)]="searchText" class="form-control" 
                 name="search" id="seacrch" placeholder="Global Search" autocomplete="off" >
               </div>
@@ -49,7 +61,7 @@
             <table class="table table-bordered " id="reportTable">
               <thead >
                 <tr  >
-                  <th  style="text-transform: capitalize;background-color: rgb(243, 242, 242);" *ngFor="let item of tableCols" scope="col">{{item}}</th>
+                  <th  style="text-transform: capitalize;background-color: #3f51b5;color: white;" *ngFor="let item of tableCols" scope="col">{{item}}</th>
                   
                 </tr>
               </thead>
@@ -109,8 +121,27 @@
          
     </div>
     <div class="col-md-2">
-    <mat-card>
-        <div class="example-container">
+
+      <mat-card>
+        <h2> Fields </h2>
+        <ul class="treeItem" id="treeUl" *ngFor="let item of Fiedslist">
+          <li  >
+          <span class="fa fa-caret-right colText" (click)="DisplayTreeView($event)">  &nbsp;{{item.text}} </span>
+            <ul class="nested" (drop)="dropItem($event)"  (dragover)="allowDrop($event)" >
+              <li draggable="true"  (dragstart)="drag($event)" [id]="cols" 
+               *ngFor="let cols of item.nodes">
+               {{cols}} 
+               
+              </li>
+
+            </ul>
+           
+          </li>
+
+        </ul>
+  
+  
+        <div class="example-container" style="display: none;" >
             <h2> Fields </h2>
           
             <div
@@ -123,7 +154,7 @@
               <div class="example-box"  style="text-transform: capitalize;" *ngFor="let item of Fields" cdkDrag>{{item}}</div>
             </div>
           </div>
-          </mat-card>
+    </mat-card> 
     </div>
   </div>
 

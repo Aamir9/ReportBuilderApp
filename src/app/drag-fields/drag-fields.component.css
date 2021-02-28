@@ -113,3 +113,111 @@ table {
 
 
 }
+
+
+
+
+/* ul styling make tree */
+#treeUl{
+  margin: 0;
+  padding: 0;
+}
+#treeUl , #treeUl ul {
+  list-style-type: none;
+}
+
+
+.caret {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
+}
+
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.caret-down::before {
+  color: black;
+  -ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Safari */
+  transform: rotate(90deg);  
+}
+
+
+.treeItem{
+
+  margin-bottom: 1rem !important;
+  list-style: none;
+  padding: 0.6rem !important;
+  color: white;
+  background: #3f51b5;
+  /* border-bottom: 2px solid white !; */
+  border-radius: 4px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+ 
+    
+}
+
+.treeItem .colText{
+  font-size: 1rem;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.nested {
+  display: none;
+  padding-left: 0;
+}
+
+.nested li{
+  text-transform:capitalize;
+  border: 1px solid white;
+    padding: 0.5rem;
+    border-radius: 0px;
+    margin: 0.6rem 0;
+    cursor: move;
+   
+  
+}
+
+.Treeactive {
+  display: block !important;
+}
+
+
+#draged {
+  width: 100%;
+  height: 19vh;
+  border: 1px solid black;
+}
+
+#draged ul{
+  padding-left: 0;
+    color: white;
+    margin-bottom: 0;
+    width: auto; 
+    display: inline-block;
+}
+#draged ul li{
+  background: #3f51b5;
+  margin: 0.3rem;
+  margin-right: 0;
+  padding: 0.3rem;
+  border-radius: 5px;
+  display: inline-block;
+  box-sizing: border-box;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+  
+  
+}

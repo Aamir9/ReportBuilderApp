@@ -23,6 +23,8 @@ import {MatTreeModule} from '@angular/material/tree';
 // ng2 module 
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
+import { ToastrModule } from 'ngx-toastr';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -42,7 +44,8 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatTreeModule
+    MatTreeModule,
+    ToastrModule.forRoot(),
   ],
   providers: [ReportBuilderService],
   bootstrap: [AppComponent]
