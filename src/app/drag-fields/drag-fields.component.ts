@@ -198,7 +198,7 @@ export class DragFieldsComponent implements OnInit {
 
   }
 
-  dropItem(ev, item) {
+  dropItem(ev) {
     this.isTableShow = false;
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
