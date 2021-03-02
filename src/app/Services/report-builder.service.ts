@@ -17,11 +17,13 @@ export class ReportBuilderService {
   constructor(private http: HttpClient) { }
 
 
-  GenerateFieldsReporst():Observable<any> {
-    return this.http.post(this.baseUrl+ '/RepportBuilder/GetFieldsData', { headers: this.headers });
+  GenerateFieldsReporst(body):Observable<any> {
+    return this.http.post(this.baseUrl+ '/RepportBuilder/GetFieldsData',body, { headers: this.headers });
   }
 
-  // GenerateFieldsReporst(body):any {
-  //   return this.http.post(this.baseUrl+ '/RepportBuilder/GetFieldsData', body, { headers: this.headers });
-  // }
+  GetTablesColumnsNames():Observable<any> {
+    return this.http.post(this.baseUrl+ '/RepportBuilder/GetColumnsNames', { headers: this.headers });
+  }
+
+  
 }
