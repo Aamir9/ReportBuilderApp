@@ -11,4 +11,5 @@ export class reportInfo{
     DepartmentName?:string; 
     CountryId?:number; 
     
+    
 }

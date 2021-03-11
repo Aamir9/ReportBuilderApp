@@ -6,7 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 
 
 interface tableColsNames {
-
   text?: string,
   nodes?: Array<string>
 }
@@ -21,13 +20,14 @@ export class DragFieldsComponent implements OnInit {
 
   tableData: any[] = [];
   reportResponse: reportInfo[] = [];
-  SelectedFields: string[] = [];
+  selectedFields: string[] = [];
+  
   tableCols: string[] = [];
   isTableShow = false;
   searchText;
   obj: { [key: string]: string | number | any } = {};
   fileName = 'ExcelSheet.xlsx';
-  Fiedslist: tableColsNames[] = [];
+  fiedslist: tableColsNames[] = [];
   constructor(private _reportBuilderService: ReportBuilderService, private toastr: ToastrService) {
 
   }
@@ -36,18 +36,18 @@ export class DragFieldsComponent implements OnInit {
    this.GetTablesColsNames();
   }
   GenerateReport() {
-    if (this.SelectedFields.length > 0) {
-
-      this.ReportApiResponse();
-      this.FilterTableColAndData();
+    if (this.selectedFields.length > 0) {
+        this.ReportApiResponse();
+        this.FilterTableColAndData();
     }
 
   }
   ReportApiResponse() {
     this.reportResponse = [];
-    this._reportBuilderService.GenerateFieldsReporst(this.SelectedFields).subscribe((res: any) => {
+    this.tableCols = [];
+    this._reportBuilderService.GenerateFieldsReporst(this.selectedFields).subscribe((res: any) => {
       if (res.code === 1) {
-        this.tableCols = this.SelectedFields;
+        this.tableCols = this.selectedFields;
         this.reportResponse = res.data;
       }
     }
@@ -59,46 +59,31 @@ export class DragFieldsComponent implements OnInit {
       if (res.code === 1) {
 
         let emp = {
-          text: 'Employee',
-          nodes: res.employeeCols,
+          text: res.employee[1],
+          nodes: res.employee[0],
         }
-        this.Fiedslist.push(emp);
+        this.fiedslist.push(emp);
 
-        let dptNodes = res.departmentCols;
-        const i = dptNodes.indexOf('EmployeId');
-        if (i > -1) {
-          dptNodes.splice(i, 1);
-          let dpt = {
-            text: 'Department',
-            nodes: dptNodes,
+        
+         let dpt = {
+            text: res.department[1],
+            nodes: res.department[0],
           }
-          this.Fiedslist.push(dpt)
-        }
+          this.fiedslist.push(dpt)
+        
 
-        let ctyNodes = res.cityCols;
-        const i1 = ctyNodes.indexOf('EmployeId');
-        if (i > -1) {
-          ctyNodes.splice(i, 1);
-          let cty = {
-            text: 'City',
-            nodes: ctyNodes,
+          let cty = { 
+            text: res.city[1],
+            nodes:  res.city[0],
           }
-          this.Fiedslist.push(cty)
-        }
-
-
-        let cntyNodes = res.countryCols;
-        const i2 = cntyNodes.indexOf('EmployeId');
-        if (i2 > -1) {
-          cntyNodes.splice(i, 1);
+          this.fiedslist.push(cty)
+        
           let cntry = {
-            text: 'Country',
-            nodes: cntyNodes
+            text: res.countryCols[0],
+            nodes: res.countryCols[1],
           }
-          this.Fiedslist.push(cntry)
-        }
-
-
+          this.fiedslist.push(cntry)
+       
       }
     }
     );
@@ -107,51 +92,45 @@ export class DragFieldsComponent implements OnInit {
     this.tableData = [];
     setTimeout(() => {
       for (let i = 0; i <= this.reportResponse.length; i++) {
-        for (let j = 0; j <= this.SelectedFields.length; j++) {
+        for (let j = 0; j <= this.selectedFields.length; j++) {
 
-          if (this.SelectedFields[j] === 'EmployeName') {
+          if (this.selectedFields[j] === 'EmployeName') {
             this.obj['EmployeName'] = this.reportResponse[i].EmployeName;
 
-          } else if (this.SelectedFields[j] === 'EmployeDescription') {
+          } else if (this.selectedFields[j] === 'EmployeDescription') {
             this.obj['EmployeDescription'] = this.reportResponse[i].EmployeDescription;
 
           }
-          else if (this.SelectedFields[j] === 'JoinDate') {
-            // .toString().split('T')[0]
+          else if (this.selectedFields[j] === 'JoinDate') {
             this.obj['JoinDate'] = this.reportResponse[i].JoinDate;
 
           }
 
-          else if (this.SelectedFields[j] === 'cityName') {
+          else if (this.selectedFields[j] === 'CityName') {
             this.obj['CityName'] = this.reportResponse[i].CityName;
           }
-
-
-
-          else if (this.SelectedFields[j] === 'CountryName') {
-            this.obj['CountryName'] = this.reportResponse[i].EmployeDescription;
+         else if (this.selectedFields[j] === 'CountryName') {
+            this.obj['CountryName'] = this.reportResponse[i].CountryName;
 
           }
-
-
-          else if (this.SelectedFields[j] === 'DepartmentName') {
+         else if (this.selectedFields[j] === 'DepartmentName') {
             this.obj['DepartmentName'] = this.reportResponse[i].DepartmentName;
 
           }
 
-          else if (this.SelectedFields[j] === 'EmployeId') {
+          else if (this.selectedFields[j] === 'EmployeId') {
             this.obj['EmployeId'] = this.reportResponse[i].EmployeId;
           }
 
-          else if (this.SelectedFields[j] === 'DepartmentId') {
+          else if (this.selectedFields[j] === 'DepartmentId') {
             this.obj['DepartmentId'] = this.reportResponse[i].DepartmentId;
           }
 
-          else if (this.SelectedFields[j] === 'CityId') {
+          else if (this.selectedFields[j] === 'CityId') {
             this.obj['CityId'] = this.reportResponse[i].CityId;
           }
 
-          else if (this.SelectedFields[j] === 'CountryId') {
+          else if (this.selectedFields[j] === 'CountryId') {
             this.obj['CountryId'] = this.reportResponse[i].CountryId;
           }
 
@@ -162,7 +141,7 @@ export class DragFieldsComponent implements OnInit {
         this.tableData.push(this.obj);
         this.obj = [];
       }
-    }, 1000);
+    }, 200);
 
     this.isTableShow = true;
   }
@@ -202,9 +181,9 @@ export class DragFieldsComponent implements OnInit {
     this.isTableShow = false;
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
-    let isVal = this.SelectedFields.find(o => o === data);
+    let isVal = this.selectedFields.find(o => o === data);
     if (isVal === undefined)
-      this.SelectedFields.push(data);
+      this.selectedFields.push(data);
     else
       this.showInfo(isVal + ' ' + 'aready exist');
   }
@@ -219,9 +198,9 @@ export class DragFieldsComponent implements OnInit {
 
   RemoveItemFromSectedList(item) {
     this.isTableShow = false;
-    const index = this.SelectedFields.indexOf(item);
+    const index = this.selectedFields.indexOf(item);
     if (index > -1) {
-      this.SelectedFields.splice(index, 1);
+      this.selectedFields.splice(index, 1);
       this.showSuccess('Removed ' + ' ' + item);
     }
 
