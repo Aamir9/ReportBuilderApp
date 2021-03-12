@@ -1,13 +1,13 @@
 <div class="row">
 
-  <div class="col-md-10">
+  <div class="col-md-9">
     <mat-card>
       <div class="example-container2">
         <h2>Selected Fields</h2>
         <div id="draged" (drop)="dropItem($event)" (dragover)="allowDrop($event)">
           <ul *ngFor="let item of selectedFields">
             <li class="d-flex ">
-              <span class="pt-1 pb-1" style="text-transform: capitalize;"> {{item}} </span>
+              <span class="pt-1 pb-1" > {{item }} </span>
               <mat-icon style="margin-left: 1rem;cursor: pointer;" (click)="RemoveItemFromSectedList(item)"> cancel
               </mat-icon>
             </li>
@@ -50,57 +50,75 @@
 
         </div>
 
-        <table class="table table-bordered " id="reportTable">
+         
+        <table class="table table-bordered table-responsive" id="reportTable">
           <thead>
             <tr>
-              <th style="text-transform: capitalize;background-color: #3f51b5;color: white;"
-                *ngFor="let item of tableCols" scope="col">{{item}}</th>
+              <th style=" background-color: #3f51b5;color: white;"
+                *ngFor="let item of tableCols" scope="col">{{item |removePrefiexText:item}}</th>
 
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of tableData | filter:searchText ">
               <td *ngFor="let name of tableCols;">
-                <div *ngIf="name==='EmployeName' ">
-                  {{data.EmployeName}}
+              
+             
+                <div *ngIf="name==='tblEmployes.EmployeName' ">
+                  {{data.tblEmployesEmployeName}}
                 </div>
-                <div *ngIf="name==='EmployeDescription' ">
-                  {{data.EmployeDescription}}
+                <div *ngIf="name==='tblEmployes.EmployeDescription' ">
+                  {{data.tblEmployesEmployeDescription}}
+                </div>
+                <div *ngIf="name==='tblEmployes.EmployeId' ">
+                  {{data.tblEmployesEmployeId}}
+                </div>
+
+                <div *ngIf="name==='tblEmployes.JoinDate' ">
+                  {{data.tblEmployesJoinDate }}
+                </div>
+                <div *ngIf="name==='tblEmployes.CountryId' ">
+                  {{data.tblEmployesCountryId}}
+                </div>
+
+                <div *ngIf="name==='tblEmployes.CityId' ">
+                  {{data.tblEmployesCityId}}
+                </div>
+
+                <div *ngIf="name==='tblEmployes.DepartmentId' ">
+                  {{data.tblEmployesDepartmentId}}
+                </div>
+
+                
+
+                <div *ngIf="name==='tblCities.CityId' ">
+                  {{data.tblCitiesCityId}}
+                </div>
+                <div *ngIf="name==='tblCities.CityName' ">
+                  {{data.tblCitiesCityName}}
                 </div>
 
 
-                <div *ngIf="name==='CityName' ">
-                  {{data.CityName}}
+                <div *ngIf="name==='tblDepartments.DepartmentId' ">
+                  {{data.tblDepartmentsDepartmentId}}
+                </div>
+                <div *ngIf="name==='tblDepartments.DepartmentName' ">
+                  {{data.tblDepartmentsDepartmentName}}
                 </div>
 
-                <div *ngIf="name==='DepartmentName' ">
-                  {{data.DepartmentName}}
-                </div>
 
 
-                <div *ngIf="name==='CountryName' ">
-                  {{data.CountryName}}
+                <div *ngIf="name==='tblCountries.CountryId' ">
+                  {{data.tblCountriesCountryId}}
                 </div>
 
-                <div *ngIf="name==='EmployeId' ">
-                  {{data.EmployeId}}
+                <div *ngIf="name==='tblCountries.CountryName' ">
+                  {{data.tblCountriesCountryName}}
                 </div>
 
-                <div *ngIf="name==='CountryId' ">
-                  {{data.CountryId}}
-                </div>
+                
 
-                <div *ngIf="name==='CityId' ">
-                  {{data.CityId}}
-                </div>
-
-                <div *ngIf="name==='DepartmentId' ">
-                  {{data.DepartmentId}}
-                </div>
-
-                <div *ngIf="name==='JoinDate' ">
-                  {{data.JoinDate }}
-                </div>
+                
 
               </td>
             </tr>
@@ -113,7 +131,7 @@
     </div>
 
   </div>
-  <div class="col-md-2">
+  <div class="col-md-3">
 
     <mat-card>
       <h2> Fields </h2>
@@ -122,7 +140,7 @@
           <span class="fa fa-caret-right colText " style="width: 100%;" (click)="DisplayTreeView($event)"> &nbsp;{{item.text}} </span>
           <ul class="nested" (drop)="dropItem($event ,item)" (dragover)="allowDrop($event)">
             <li draggable="true" (dragstart)="drag($event)" [id]="cols" *ngFor="let cols of item.nodes">
-              {{cols}}
+              {{cols|removePrefiexText:col}}
 
             </li>
 

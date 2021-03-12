@@ -24,11 +24,13 @@ import {MatTreeModule} from '@angular/material/tree';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 import { ToastrModule } from 'ngx-toastr';
+import { RemovePrefiexTextPipe } from './pipes/remove-prefiex-text.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     DragFieldsComponent,
+    RemovePrefiexTextPipe,
     
   ],
   imports: [

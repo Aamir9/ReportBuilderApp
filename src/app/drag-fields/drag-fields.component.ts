@@ -18,10 +18,10 @@ interface tableColsNames {
 })
 export class DragFieldsComponent implements OnInit {
 
-  tableData: any[] = [];
+  tableData: any = {};
   reportResponse: reportInfo[] = [];
   selectedFields: string[] = [];
-  
+
   tableCols: string[] = [];
   isTableShow = false;
   searchText;
@@ -38,17 +38,21 @@ export class DragFieldsComponent implements OnInit {
   GenerateReport() {
     if (this.selectedFields.length > 0) {
         this.ReportApiResponse();
-        this.FilterTableColAndData();
+        // this.FilterTableColAndData();
+
     }
 
   }
   ReportApiResponse() {
     this.reportResponse = [];
     this.tableCols = [];
+    this.tableData = [];
     this._reportBuilderService.GenerateFieldsReporst(this.selectedFields).subscribe((res: any) => {
       if (res.code === 1) {
         this.tableCols = this.selectedFields;
         this.reportResponse = res.data;
+       this.tableData= res.data;
+       this.isTableShow = true;
       }
     }
     );
@@ -79,8 +83,8 @@ export class DragFieldsComponent implements OnInit {
           this.fiedslist.push(cty)
         
           let cntry = {
-            text: res.countryCols[0],
-            nodes: res.countryCols[1],
+            text: res.country[1],
+            nodes: res.country[0],
           }
           this.fiedslist.push(cntry)
        
@@ -88,63 +92,7 @@ export class DragFieldsComponent implements OnInit {
     }
     );
   }
-  FilterTableColAndData(): void {
-    this.tableData = [];
-    setTimeout(() => {
-      for (let i = 0; i <= this.reportResponse.length; i++) {
-        for (let j = 0; j <= this.selectedFields.length; j++) {
 
-          if (this.selectedFields[j] === 'EmployeName') {
-            this.obj['EmployeName'] = this.reportResponse[i].EmployeName;
-
-          } else if (this.selectedFields[j] === 'EmployeDescription') {
-            this.obj['EmployeDescription'] = this.reportResponse[i].EmployeDescription;
-
-          }
-          else if (this.selectedFields[j] === 'JoinDate') {
-            this.obj['JoinDate'] = this.reportResponse[i].JoinDate;
-
-          }
-
-          else if (this.selectedFields[j] === 'CityName') {
-            this.obj['CityName'] = this.reportResponse[i].CityName;
-          }
-         else if (this.selectedFields[j] === 'CountryName') {
-            this.obj['CountryName'] = this.reportResponse[i].CountryName;
-
-          }
-         else if (this.selectedFields[j] === 'DepartmentName') {
-            this.obj['DepartmentName'] = this.reportResponse[i].DepartmentName;
-
-          }
-
-          else if (this.selectedFields[j] === 'EmployeId') {
-            this.obj['EmployeId'] = this.reportResponse[i].EmployeId;
-          }
-
-          else if (this.selectedFields[j] === 'DepartmentId') {
-            this.obj['DepartmentId'] = this.reportResponse[i].DepartmentId;
-          }
-
-          else if (this.selectedFields[j] === 'CityId') {
-            this.obj['CityId'] = this.reportResponse[i].CityId;
-          }
-
-          else if (this.selectedFields[j] === 'CountryId') {
-            this.obj['CountryId'] = this.reportResponse[i].CountryId;
-          }
-
-
-
-        }
-
-        this.tableData.push(this.obj);
-        this.obj = [];
-      }
-    }, 200);
-
-    this.isTableShow = true;
-  }
 
 
   exportexcel(): void {
