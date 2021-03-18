@@ -2,11 +2,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
-
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {ReportBuilderService} from 'src/app/Services/report-builder.service';
+import {ShareDataComponentsService} from 'src/app/Services/share-data-components.service';
 
 
 
@@ -20,17 +19,23 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
 import {MatTreeModule} from '@angular/material/tree';
+import {MatSelectModule} from '@angular/material/select';
+import {MatMenuModule} from '@angular/material/menu';
+
 // ng2 module 
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 
 import { ToastrModule } from 'ngx-toastr';
 import { RemovePrefiexTextPipe } from './pipes/remove-prefiex-text.pipe';
+import { ReportComponent } from './report/report.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     DragFieldsComponent,
     RemovePrefiexTextPipe,
+    ReportComponent,
     
   ],
   imports: [
@@ -48,8 +53,16 @@ import { RemovePrefiexTextPipe } from './pipes/remove-prefiex-text.pipe';
     MatCardModule,
     MatTreeModule,
     ToastrModule.forRoot(),
+    AppRoutingModule,
+    MatSelectModule,
+    MatMenuModule
   ],
-  providers: [ReportBuilderService],
-  bootstrap: [AppComponent]
+  providers: [
+    ReportBuilderService ,
+    ShareDataComponentsService
+  ],
+  bootstrap: [
+    AppComponent
+  ]
 })
 export class AppModule { }

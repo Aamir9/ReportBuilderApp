@@ -1,5 +1,4 @@
 export class reportInfo{
-
     EmployeId?:number;
     EmployeName?:string; 
     EmployeDescription?:string
@@ -10,6 +9,5 @@ export class reportInfo{
     DepartmentId ?:number; 
     DepartmentName?:string; 
     CountryId?:number; 
-    
     
 }

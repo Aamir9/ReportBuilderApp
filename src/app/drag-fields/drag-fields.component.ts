@@ -1,15 +1,21 @@
+
 import { Component, OnInit } from '@angular/core';
 import { ReportBuilderService } from '../Services/report-builder.service';
 import { reportInfo } from 'src/app/interfaces/reportInfo';
-import * as XLSX from 'xlsx';
 import { ToastrService } from 'ngx-toastr';
-
+import { ShareDataComponentsService } from 'src/app/Services/share-data-components.service';
+import { Router } from '@angular/router';
+import { ThrowStmt } from '@angular/compiler';
 
 interface tableColsNames {
   text?: string,
   nodes?: Array<string>
 }
 
+interface ColsInfo {
+  propertyName: string,
+  propertyType: string
+}
 
 @Component({
   selector: 'app-drag-fields',
@@ -21,92 +27,86 @@ export class DragFieldsComponent implements OnInit {
   tableData: any = {};
   reportResponse: reportInfo[] = [];
   selectedFields: string[] = [];
-
+  whereFields: string[] = [];
   tableCols: string[] = [];
-  isTableShow = false;
   searchText;
   obj: { [key: string]: string | number | any } = {};
   fileName = 'ExcelSheet.xlsx';
   fiedslist: tableColsNames[] = [];
-  constructor(private _reportBuilderService: ReportBuilderService, private toastr: ToastrService) {
+  btnDisable = true;
+  numberOperators: string[] = [];
+  stringOperators: string[] = [];
+  boleanOperators: string[] = [];
+  dateOperators: string[] = [];
+  propName = "";
+  exp = "";
+  whereCondtionsList: string [] = [];
+  constructor(private router: Router, private _reportBuilderService: ReportBuilderService, private toastr: ToastrService, private _shareDataComponentsService: ShareDataComponentsService) {
 
   }
-
   ngOnInit(): void {
-   this.GetTablesColsNames();
+    this.GetTablesColsNames();
   }
-  GenerateReport() {
-    if (this.selectedFields.length > 0) {
-        this.ReportApiResponse();
-        // this.FilterTableColAndData();
 
-    }
-
-  }
-  ReportApiResponse() {
-    this.reportResponse = [];
-    this.tableCols = [];
-    this.tableData = [];
-    this._reportBuilderService.GenerateFieldsReporst(this.selectedFields).subscribe((res: any) => {
-      if (res.code === 1) {
-        this.tableCols = this.selectedFields;
-        this.reportResponse = res.data;
-       this.tableData= res.data;
-       this.isTableShow = true;
-      }
-    }
-    );
+  CreateReport() {
+    let fields:string[]= [];
+    let v = "";
+    this.selectedFields.forEach(element => {
+       v = element.replace(/\:+[a-z A-Z]*/gi,"");
+       v = v.trim();
+       fields.push(v);
+      
+    });    
+    this._shareDataComponentsService.addFields(fields);
+    this._shareDataComponentsService.addWhereList(this.whereCondtionsList);
+    this.router.navigateByUrl('/report');
   }
 
   GetTablesColsNames() {
     this._reportBuilderService.GetTablesColumnsNames().subscribe((res: any) => {
       if (res.code === 1) {
 
-        let emp = {
-          text: res.employee[1],
-          nodes: res.employee[0],
+       let emp = {
+          text: res.employee[0].tblName,
+          nodes: this.IteratePropInfo(res.employee[0].colInfo)
+
         }
         this.fiedslist.push(emp);
 
-        
-         let dpt = {
-            text: res.department[1],
-            nodes: res.department[0],
-          }
-          this.fiedslist.push(dpt)
-        
 
-          let cty = { 
-            text: res.city[1],
-            nodes:  res.city[0],
-          }
-          this.fiedslist.push(cty)
-        
-          let cntry = {
-            text: res.country[1],
-            nodes: res.country[0],
-          }
-          this.fiedslist.push(cntry)
-       
+        let dpt = {
+          text: res.department[0].tblName,
+          nodes: this.IteratePropInfo(res.department[0].colInfo),
+        }
+        this.fiedslist.push(dpt)
+
+
+        let cty = {
+          text: res.city[0].tblName,
+          nodes: this.IteratePropInfo(res.city[0].colInfo),
+        }
+        this.fiedslist.push(cty)
+
+        let cntry = {
+          text: res.country[0].tblName,
+          nodes: this.IteratePropInfo(res.country[0].colInfo),
+        }
+        this.fiedslist.push(cntry)
+
       }
     }
     );
   }
 
 
+  IteratePropInfo(data: ColsInfo[]): string[] {
 
-  exportexcel(): void {
-    /* table id is passed over here */
-    let element = document.getElementById('reportTable');
-    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
+    let clInfo: string[] = [];
+    for (let index = 0; index < data.length; index++) {
+      clInfo.push(data[index].propertyName + ':' + data[index].propertyType);
+    }
 
-    /* generate workbook and add the worksheet */
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-    /* save to file */
-    XLSX.writeFile(wb, this.fileName);
-
+    return clInfo;
   }
 
   DisplayTreeView(event) {
@@ -126,7 +126,7 @@ export class DragFieldsComponent implements OnInit {
   }
 
   dropItem(ev) {
-    this.isTableShow = false;
+
     ev.preventDefault();
     var data = ev.dataTransfer.getData("text");
     let isVal = this.selectedFields.find(o => o === data);
@@ -134,6 +134,23 @@ export class DragFieldsComponent implements OnInit {
       this.selectedFields.push(data);
     else
       this.showInfo(isVal + ' ' + 'aready exist');
+
+    this.disabledBtnFunction();
+  }
+
+  dropItemWhereArea(ev) {
+
+    ev.preventDefault();
+    var data = ev.dataTransfer.getData("text");
+    let isVal = this.whereFields.find(o => o === data);
+    if (isVal === undefined) {
+         this.GetOperatorsApiCall(data);
+         this.whereFields.push(data);   
+    }
+    else {
+      this.showInfo(isVal + ' ' + 'aready exist');
+    }
+
   }
 
   allowDrop(ev) {
@@ -143,12 +160,20 @@ export class DragFieldsComponent implements OnInit {
     ev.dataTransfer.setData("text", ev.target.id);
   }
 
-
   RemoveItemFromSectedList(item) {
-    this.isTableShow = false;
     const index = this.selectedFields.indexOf(item);
     if (index > -1) {
       this.selectedFields.splice(index, 1);
+      this.showSuccess('Removed ' + ' ' + item);
+    }
+    this.disabledBtnFunction();
+
+  }
+
+  RemoveItemWhereList(item) {
+    const index = this.whereFields.indexOf(item);
+    if (index > -1) {
+      this.whereFields.splice(index, 1);
       this.showSuccess('Removed ' + ' ' + item);
     }
 
@@ -162,5 +187,86 @@ export class DragFieldsComponent implements OnInit {
     this.toastr.success(message, 'Success !');
   }
 
+  disabledBtnFunction() {
+    if (this.selectedFields.length > 0) {
+      this.btnDisable = false;
+    }
+    else {
+      this.btnDisable = true;
+    }
+  }
+
+  GetOperatorsApiCall(body: string) {
+
+    this._reportBuilderService.GetOperators(body).subscribe((res: any) => {
+      if (res.code === 1) {
+        if (res.dataType === 'number') {
+          this.numberOperators = res.data;
+        }
+        else if (res.dataType === 'string') {
+          this.stringOperators = res.data;
+        }
+        else if (res.dataType === 'bool') {
+          this.boleanOperators = res.data;
+        }
+        else if (res.dataType === 'date') {
+          this.dateOperators = res.data;
+        }
+
+      }
+    });
+  }
+
+  // check is number type data
+  IsNumberTypeProp(item): boolean {
+    return item.includes(':number');
+  }
+
+  // check is string or  char type data
+  IsStringTypeProp(item): boolean {
+    return item.includes(':string');
+  }
+
+
+  // check is bool or boolea or  char type data
+  IsBoolTypeProp(item): boolean {
+    return item.includes(':bool');
+  }
+
+
+  // check is date or time or  char type data
+  IsDateTypeProp(item): boolean {
+    return item.includes(':date');
+  }
+
+
+  selectChange(event,item){
+    //  var elment:any = document.getElementById("tblEmployes.EmployeId:numberdd");
+    //  let ddIndex = elment.selectedIndex;
+    //   document.getElementById("tblEmployes.EmployeId:numberdd");
+
+    console.log(event);
+    let selectedIndex = event.target.selectedIndex;
+
+    let i = item.indexOf(':');
+    let prop = item.substring(0,i);
+    
+    this.exp = prop + " " + event.target.options[selectedIndex].value;
+
+  }
+
+
+  inputChange(event:any){
+
+  let input=  event.target.value;
+
+  if(input === '=='){
+
+    input = '=' 
+  }
+  this.exp ='and' + ' ' + this.exp + input;
+  this.whereCondtionsList.push(this.exp);
+
+  }
 
 }

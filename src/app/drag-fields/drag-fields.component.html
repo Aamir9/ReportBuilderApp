@@ -1,155 +1,174 @@
-<div class="row">
+<section id="drag">
+  <div class="container py-5">
+    <div class="row">
 
-  <div class="col-md-9">
-    <mat-card>
-      <div class="example-container2">
-        <h2>Selected Fields</h2>
-        <div id="draged" (drop)="dropItem($event)" (dragover)="allowDrop($event)">
-          <ul *ngFor="let item of selectedFields">
-            <li class="d-flex ">
-              <span class="pt-1 pb-1" > {{item }} </span>
-              <mat-icon style="margin-left: 1rem;cursor: pointer;" (click)="RemoveItemFromSectedList(item)"> cancel
-              </mat-icon>
+      <div class="col-md-3">
+
+        <mat-card>
+
+          <h2> Fields </h2>
+          <ul class="treeItem" id="treeUl" *ngFor="let item of fiedslist">
+            <li>
+              <span class="fa fa-caret-right colText " style="width: 100%;" (click)="DisplayTreeView($event)">
+                &nbsp;{{item.text}} </span>
+              <ul class="nested" (drop)="dropItem($event ,item)" (dragover)="allowDrop($event)">
+                <li draggable="true" (dragstart)="drag($event)" [id]="cols" *ngFor="let cols of item.nodes">
+
+                  {{cols|removePrefiexText:col}}
+
+                </li>
+
+              </ul>
+
             </li>
+
           </ul>
-        </div>
 
-
+        </mat-card>
       </div>
+      <div class="col-md-9">
+        <mat-card>
 
+          <div class="example-container2">
+            <!--selected fields area-->
 
-
-      <div class="d-flex justify-content-end py-3">
-        <button mat-flat-button color="primary" (click)="GenerateReport()"> Generate Report</button>
-      </div>
-    </mat-card>
-
-
-
-
-    <!-- table area -->
-    <div *ngIf="isTableShow" class="mt-md-5">
-
-      <mat-card>
-        <h2>Report Information</h2>
-        <div class="d-flex justify-content-between mt-md5">
-          <div>
-            <div class="form-group mb-3">
-              <input type="text" [(ngModel)]="searchText" class="form-control" name="search" id="seacrch"
-                placeholder="Global Search" autocomplete="off">
+            <h2>Selected Fields</h2>
+            <div id="draged" (drop)="dropItem($event)" (dragover)="allowDrop($event)">
+              <ul *ngFor="let item of selectedFields">
+                <li class="d-flex ">
+                  <span class="pt-1 pb-1"> {{item }} </span>
+                  <mat-icon style="margin-left: 1rem;cursor: pointer;" (click)="RemoveItemFromSectedList(item)"> cancel
+                  </mat-icon>
+                </li>
+              </ul>
             </div>
+
+            <!-- where area -->
+            <h2 class="mt-3">Filters</h2>
+            <div class="my-3" id="whereArea" (drop)="dropItemWhereArea($event)" (dragover)="allowDrop($event)">
+
+              <div class="whereMain" *ngFor="let item of whereFields">
+                <div class="justify-content-around whereList">
+
+                  <div class="item px-2">
+                    <span style="margin-top: 0.5rem; "> {{item }} </span>
+                  </div>
+
+
+                  <!--dropdown of operators-->
+
+
+                  <div class="form-group item px-2">
+
+            
+                      
+                    <select (change)="selectChange($event, item)" *ngIf="IsNumberTypeProp(item)" class="select-control form-control"
+                      [id]="item + 'dd'">
+                      <option [selected]="false" value="">
+                        Select Operator
+                      </option>
+                      <option [value]="item"   *ngFor="let item of numberOperators">
+                        {{item}}
+                      </option>
+                    </select>
+
+
+                    <select  (change)="selectChange($event, item)" *ngIf="IsStringTypeProp(item)" class="select-control form-control"
+                      [id]="item">
+                      <option [selected]="false" value="">
+                        Select Operator
+                      </option>
+                      <option *ngFor="let item of stringOperators">
+                        {{item}}
+                      </option>
+                    </select>
+
+
+
+                    <select (change)="selectChange($event, item)"  *ngIf="IsBoolTypeProp(item)" class="select-control form-control"
+                      [id]="item">
+                      <option [selected]="false" value="">
+                        Select Operator
+                      </option>
+                      <option *ngFor="let item of boleanOperators">
+                        {{item}}
+                      </option>
+                    </select>
+
+
+                    <select  (change)="selectChange($event, item)" *ngIf="IsDateTypeProp(item)" class="select-control form-control"
+                      [id]="item">
+                      <option [selected]="false" value="">
+                        Select Operator
+                      </option>
+                      <option *ngFor="let item of dateOperators">
+                        {{item}}
+                      </option>
+                    </select>
+
+
+                 
+
+ 
+                   
+                  </div>
+
+
+                  <div class="form-group item px-2" *ngIf="IsNumberTypeProp(item)">
+                    <input (change)="inputChange($event)" type="number" class="form-control" name="whereValue" placeholder="Enter Value">
+                  </div>
+
+                  <div class="form-group item px-2" *ngIf="IsStringTypeProp(item)">
+                    <input  (change)="inputChange($event)"  type="text" class="form-control" name="whereValue" placeholder="Enter Value">
+                  </div>
+
+
+                  <div class="form-group item px-2" *ngIf="IsBoolTypeProp(item)">
+                    <input  (change)="inputChange($event)" type="hidden" class="form-control" name="whereValue" placeholder="Enter Value">
+                  </div>
+
+
+                  <div class="form-group item px-2" *ngIf="IsDateTypeProp(item)">
+                    <input  (change)="inputChange($event)"  type="date" class="form-control" name="whereValue" placeholder="Enter Value">
+                  </div>
+
+
+                  <!-- <div class="item px-2" style="width: 5vw;">
+
+                    <mat-icon style="cursor: pointer;" (click)="RemoveItemWhereList(item)"> cancel
+                    </mat-icon>
+                  </div> -->
+
+
+
+
+
+                </div>
+              </div>
+            </div>
+
+
           </div>
-          <div>
 
 
-            <button mat-flat-button color="primary" (click)="exportexcel()">
-              <mat-icon> cloud_download</mat-icon>
-            </button>
 
-          </div>
+          <div class="d-flex justify-content-end py-3">
+            <button mat-flat-button color="primary" (click)="CreateReport()" [disabled]="btnDisable"> Generate
+              Report</button>
 
-        </div>
 
-         
-        <table class="table table-bordered table-responsive" id="reportTable">
-          <thead>
-            <tr>
-              <th style=" background-color: #3f51b5;color: white;"
-                *ngFor="let item of tableCols" scope="col">{{item |removePrefiexText:item}}</th>
-
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of tableData | filter:searchText ">
-              <td *ngFor="let name of tableCols;">
               
-             
-                <div *ngIf="name==='tblEmployes.EmployeName' ">
-                  {{data.tblEmployesEmployeName}}
-                </div>
-                <div *ngIf="name==='tblEmployes.EmployeDescription' ">
-                  {{data.tblEmployesEmployeDescription}}
-                </div>
-                <div *ngIf="name==='tblEmployes.EmployeId' ">
-                  {{data.tblEmployesEmployeId}}
-                </div>
-
-                <div *ngIf="name==='tblEmployes.JoinDate' ">
-                  {{data.tblEmployesJoinDate }}
-                </div>
-                <div *ngIf="name==='tblEmployes.CountryId' ">
-                  {{data.tblEmployesCountryId}}
-                </div>
-
-                <div *ngIf="name==='tblEmployes.CityId' ">
-                  {{data.tblEmployesCityId}}
-                </div>
-
-                <div *ngIf="name==='tblEmployes.DepartmentId' ">
-                  {{data.tblEmployesDepartmentId}}
-                </div>
-
-                
-
-                <div *ngIf="name==='tblCities.CityId' ">
-                  {{data.tblCitiesCityId}}
-                </div>
-                <div *ngIf="name==='tblCities.CityName' ">
-                  {{data.tblCitiesCityName}}
-                </div>
-
-
-                <div *ngIf="name==='tblDepartments.DepartmentId' ">
-                  {{data.tblDepartmentsDepartmentId}}
-                </div>
-                <div *ngIf="name==='tblDepartments.DepartmentName' ">
-                  {{data.tblDepartmentsDepartmentName}}
-                </div>
+          </div>
+        </mat-card>
 
 
 
-                <div *ngIf="name==='tblCountries.CountryId' ">
-                  {{data.tblCountriesCountryId}}
-                </div>
-
-                <div *ngIf="name==='tblCountries.CountryName' ">
-                  {{data.tblCountriesCountryName}}
-                </div>
-
-                
-
-                
-
-              </td>
-            </tr>
 
 
-          </tbody>
-        </table>
-      </mat-card>
+
+      </div>
 
     </div>
 
   </div>
-  <div class="col-md-3">
-
-    <mat-card>
-      <h2> Fields </h2>
-      <ul class="treeItem" id="treeUl" *ngFor="let item of fiedslist">
-        <li>
-          <span class="fa fa-caret-right colText " style="width: 100%;" (click)="DisplayTreeView($event)"> &nbsp;{{item.text}} </span>
-          <ul class="nested" (drop)="dropItem($event ,item)" (dragover)="allowDrop($event)">
-            <li draggable="true" (dragstart)="drag($event)" [id]="cols" *ngFor="let cols of item.nodes">
-              {{cols|removePrefiexText:col}}
-
-            </li>
-
-          </ul>
-
-        </li>
-
-      </ul>
-
-    </mat-card>
-  </div>
-</div>
+</section>
