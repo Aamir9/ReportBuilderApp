@@ -56,7 +56,18 @@ export class DragFieldsComponent implements OnInit {
        v = v.trim();
        fields.push(v);
       
-    });    
+    });
+    
+    
+    // let where:string[]= [];
+    // let w = "";
+    // this.whereCondtionsList.forEach(element => {
+    //    w = element.replace(/\:+ \s/gi,"");
+    //    w = w.trim();
+    //    where.push(v);
+      
+    // });
+
     this._shareDataComponentsService.addFields(fields);
     this._shareDataComponentsService.addWhereList(this.whereCondtionsList);
     this.router.navigateByUrl('/report');
@@ -245,28 +256,41 @@ export class DragFieldsComponent implements OnInit {
     //  let ddIndex = elment.selectedIndex;
     //   document.getElementById("tblEmployes.EmployeId:numberdd");
 
-    console.log(event);
+   
     let selectedIndex = event.target.selectedIndex;
 
     let i = item.indexOf(':');
     let prop = item.substring(0,i);
     
-    this.exp = prop + " " + event.target.options[selectedIndex].value;
+    let optr = "";
+    optr = event.target.options[selectedIndex].value;
+    if(optr === "=="){
+      optr = "=";
+    }
+    this.exp = prop + " " + optr;
 
   }
 
 
-  inputChange(event:any){
+  inputChange(event:any,isString:boolean){
+ 
+    let input =  "";
+    input=  event.target.value;
 
-  let input=  event.target.value;
-
-  if(input === '=='){
-
-    input = '=' 
+  
+  if(isString){
+    if(this.exp != null )
+       this.exp = this.exp+ " " +"\"" +  input + " \" "     + " ";
   }
-  this.exp ='and' + ' ' + this.exp + input;
+  else{
+    if(this.exp != null )
+       this.exp =  this.exp + ' ' + input +  ' ';
+  }
+ 
+
   this.whereCondtionsList.push(this.exp);
 
   }
+
 
 }

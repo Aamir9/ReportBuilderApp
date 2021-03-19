@@ -115,21 +115,21 @@
 
 
                   <div class="form-group item px-2" *ngIf="IsNumberTypeProp(item)">
-                    <input (change)="inputChange($event)" type="number" class="form-control" name="whereValue" placeholder="Enter Value">
+                    <input (change)="inputChange($event,false)" type="number" class="form-control" name="whereValue" placeholder="Enter Value">
                   </div>
 
                   <div class="form-group item px-2" *ngIf="IsStringTypeProp(item)">
-                    <input  (change)="inputChange($event)"  type="text" class="form-control" name="whereValue" placeholder="Enter Value">
+                    <input  (change)="inputChange($event,true)"  type="text" class="form-control" name="whereValue" placeholder="Enter Value">
                   </div>
 
 
                   <div class="form-group item px-2" *ngIf="IsBoolTypeProp(item)">
-                    <input  (change)="inputChange($event)" type="hidden" class="form-control" name="whereValue" placeholder="Enter Value">
+                    <input  (change)="inputChange($event,true)" type="hidden" class="form-control" name="whereValue" placeholder="Enter Value">
                   </div>
 
 
                   <div class="form-group item px-2" *ngIf="IsDateTypeProp(item)">
-                    <input  (change)="inputChange($event)"  type="date" class="form-control" name="whereValue" placeholder="Enter Value">
+                    <input  (change)="inputChange($event,true)"  type="date" class="form-control" name="whereValue" placeholder="Enter Value">
                   </div>
 
 
